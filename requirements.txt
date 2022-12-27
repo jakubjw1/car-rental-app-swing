@@ -1,0 +1,6 @@
+car rental app swing
+====================
++dodawanie, edytowanie klientów
++dodawanie, edytowanie samochodów(produktow) przez formularz
++wyrobienie karty stałego klienta, ktora nalicza znizke
++zamawianie samochodow przez klientów
