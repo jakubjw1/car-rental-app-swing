@@ -33,38 +33,28 @@ public class CarApp extends JFrame {
     }
 
     public DefaultTableModel createTable() {
-        Database stuffDatabase = new Database("jdbc:mysql://localhost/car_rental", "root", "");
-        ArrayList<Client> stuffList = stuffDatabase.getClients();
+        Database clientsDatabase = new Database("jdbc:mysql://localhost/car_rental", "root", "");
+        ArrayList<Client> clientList = clientsDatabase.getClients();
 
-        String[] columns = {"Producer", "Name", "Volume",  "Number", "Price", "Remaining"};
+        String[] columns = {"Imie", "Nazwisko", "Email",  "Number Telefonu", "Adres", "Numer Karty"};
 
-        String[][] rows = new String[stuffList.size()][6];
+        String[][] rows = new String[clientList.size()][6];
 
         int i=0;
-        for (Client e : stuffList) {
-            if (e instanceof Food) {
-                rows[i][0] = e.getProducer();
-                rows[i][1] = e.getName();
-                rows[i][2] = "---";
-                rows[i][3] = e.getNumber();
-                rows[i][4] = String.valueOf(e.getPrice());
-                rows[i][5] = String.valueOf(e.getRemaining());
-
-            } else {
-                rows[i][0] = e.getProducer();
-                rows[i][1] = e.getName();
-                rows[i][2] = String.valueOf(((Drink) e).getVolume());
-                rows[i][3] = e.getNumber();
-                rows[i][4] = String.valueOf(e.getPrice());
-                rows[i][5] = String.valueOf(e.getRemaining());
+        for (Client e : clientList) {
+                rows[i][0] = e.getImie();
+                rows[i][1] = e.getNazwisko();
+                rows[i][2] = e.getEmail();
+                rows[i][3] = e.getNrTel();
+                rows[i][4] = e.getAdres();
+                rows[i][5] = String.valueOf(e.getNrKarty());
+                i++;
             }
-            i++;
-        }
 
         DefaultTableModel model = new DefaultTableModel(rows, columns);
-        stuffTable.setModel(model);
-        stuffTable.getColumnModel().getColumn(0).setPreferredWidth(180);
-        stuffTable.getColumnModel().getColumn(1).setPreferredWidth(220);
+        tableKlienci.setModel(model);
+        tableKlienci.getColumnModel().getColumn(0).setPreferredWidth(180);
+        tableKlienci.getColumnModel().getColumn(1).setPreferredWidth(220);
         return model;
     }
 }

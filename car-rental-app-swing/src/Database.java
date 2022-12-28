@@ -17,24 +17,23 @@ public class Database {
 
         try {
             connection = DriverManager.getConnection(this.host, this.username, this.password);
-            String query = "select * from stuff";
+            String query = "SELECT * FROM klienci";
             Statement stat = connection.createStatement();
             ResultSet results = stat.executeQuery(query);
 
             while (results.next()) {
-                String producer = results.getString("Producer");
-                String name = results.getString("Name");
-                String number = results.getString("Number");
-                double price = results.getDouble("Price");
-                double volume = results.getDouble("Volume");
-                int remaining = results.getInt("Remaining");
-                int type = results.getInt("Type_ID");
+                String imie = results.getString("Imie");
+                String nazwisko = results.getString("Nazwisko");
+                String email = results.getString("Email");
+                String nrTel = results.getString("Numer Telefonu");
+                String adres = results.getString("Adres");
+                int nrKarty = results.getInt("Numer Karty");
 
                 if (type == 1) {
-                    Food f = new Food(producer, name, number, price, remaining);
+                    Food f = new Food(imie, nazwisko, email, nrTel, remaining);
                     list.add(f);
                 } else {
-                    Drink d = new Drink(producer, name, number, price, volume, remaining);
+                    Drink d = new Drink(imie, nazwisko, email, nrTel, adres, remaining);
                     list.add(d);
                 }
             }
