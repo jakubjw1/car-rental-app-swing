@@ -29,13 +29,8 @@ public class Database {
                 String adres = results.getString("Adres");
                 int nrKarty = results.getInt("Numer Karty");
 
-                if (type == 1) {
-                    Food f = new Food(imie, nazwisko, email, nrTel, remaining);
-                    list.add(f);
-                } else {
-                    Drink d = new Drink(imie, nazwisko, email, nrTel, adres, remaining);
-                    list.add(d);
-                }
+                Client c = new Client(imie, nazwisko, email, nrTel, adres, nrKarty);
+                list.add(c);
             }
 
             return list;
