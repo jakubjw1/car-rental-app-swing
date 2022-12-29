@@ -5,6 +5,5 @@ public interface Client {
     String getEmail();
     String getNrTel();
     String getAdres();
-    int getNrKarty();
 
 }

@@ -42,12 +42,21 @@ public class CarApp extends JFrame {
 
         int i=0;
         for (Client e : clientList) {
+            if (e instanceof RegularClient) {
                 rows[i][0] = e.getImie();
                 rows[i][1] = e.getNazwisko();
                 rows[i][2] = e.getEmail();
                 rows[i][3] = e.getNrTel();
                 rows[i][4] = e.getAdres();
-                rows[i][5] = String.valueOf(e.getNrKarty());
+                rows[i][5] = String.valueOf(((RegularClient) e).getNrKarty());
+            } else {
+                rows[i][0] = e.getImie();
+                rows[i][1] = e.getNazwisko();
+                rows[i][2] = e.getEmail();
+                rows[i][3] = e.getNrTel();
+                rows[i][4] = e.getAdres();
+                rows[i][5] = "-";
+            }
                 i++;
             }
 
