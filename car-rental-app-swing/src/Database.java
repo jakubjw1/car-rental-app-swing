@@ -25,9 +25,9 @@ public class Database {
                 String imie = results.getString("Imie");
                 String nazwisko = results.getString("Nazwisko");
                 String email = results.getString("Email");
-                String nrTel = results.getString("Numer Telefonu");
+                String nrTel = results.getString("NrTel");
                 String adres = results.getString("Adres");
-                int nrKarty = results.getInt("Numer Karty");
+                int nrKarty = results.getInt("NrKarty");
 
                 if (nrKarty != 0) {
                     RegularClient regularClient = new RegularClient(imie, nazwisko, email, nrTel, adres, nrKarty);
@@ -38,9 +38,8 @@ public class Database {
                 }
             }
             return list;
-
         } catch (SQLException e) {
-            System.out.println("Nie udalo sie polaczyc z baza produktow.");
+            System.out.println("Nie udalo sie polaczyc z baza klientow.");
             list.add(new NewClient("Jakub", "Wojtowicz", "jw122980@stud.ur.edu.pl", "695395695", "Stara Wieś, 544"));
             list.add(new NewClient("Marcin", "Kopytko", "mkopytko22@gmail.com", "245235232", "Malinówka, 655"));
             list.add(new RegularClient("Robert", "Konieczko", "robertkon12@gmail.com", "111222333", "Kobienice, 422", 1233));

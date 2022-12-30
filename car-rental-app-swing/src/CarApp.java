@@ -36,7 +36,7 @@ public class CarApp extends JFrame {
         Database clientsDatabase = new Database("jdbc:mysql://localhost/car_rental", "root", "");
         ArrayList<Client> clientList = clientsDatabase.getClients();
 
-        String[] columns = {"Imie", "Nazwisko", "Email",  "Number Telefonu", "Adres", "Numer Karty"};
+        String[] columns = {"Imie", "Nazwisko", "Email",  "Numer Telefonu", "Adres", "Numer Karty"};
 
         String[][] rows = new String[clientList.size()][6];
 
@@ -62,8 +62,8 @@ public class CarApp extends JFrame {
 
         DefaultTableModel model = new DefaultTableModel(rows, columns);
         tableKlienci.setModel(model);
-        tableKlienci.getColumnModel().getColumn(0).setPreferredWidth(180);
-        tableKlienci.getColumnModel().getColumn(1).setPreferredWidth(220);
+        tableKlienci.getColumnModel().getColumn(2).setPreferredWidth(140);
+        tableKlienci.getColumnModel().getColumn(5).setPreferredWidth(20);
         return model;
     }
 }
