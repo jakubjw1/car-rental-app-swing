@@ -25,6 +25,8 @@ public class CarApp extends JFrame {
     private JButton dodajButton;
     private JButton usuńButton;
     private JButton zapiszButton;
+    private JTable tableSamochody;
+    private JButton button1;
 
     public static void main(String[] args) {
         CarApp carApp1 = new CarApp();
