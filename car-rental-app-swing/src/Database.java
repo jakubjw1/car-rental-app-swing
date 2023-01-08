@@ -37,6 +37,7 @@ public class Database {
                     list.add(newClient);
                 }
             }
+            connection.close();
             return list;
         } catch (SQLException e) {
             System.out.println("Nie udalo sie polaczyc z baza klientow.");

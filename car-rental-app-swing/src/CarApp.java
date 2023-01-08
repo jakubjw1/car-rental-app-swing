@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -33,7 +34,7 @@ public class CarApp extends JFrame {
         carApp1.setVisible(true);
     }
     String host = "jdbc:mysql://localhost/car_rental";
-    String user = "root";
+    String username = "root";
     String password = "";
     public CarApp(){
         super("CarApp");
@@ -43,49 +44,84 @@ public class CarApp extends JFrame {
 
         DefaultTableModel model = createTable();
 
+        String imie = textFieldImie.getText();
+        String nazwisko = textFieldNazwisko.getText();
+        String email = textFieldEmail.getText();
+        String nrTel = textFieldNrTel.getText();
+        String adres = textFieldAdres.getText();
+        String nrKarty = textFieldNrKarty.getText();
+
         dodajButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String imie = textFieldImie.getText();
-                String nazwisko = textFieldNazwisko.getText();
-                String email = textFieldEmail.getText();
-                String nrTel = textFieldNrTel.getText();
-                String adres = textFieldAdres.getText();
 
-                try {
-                    Connection con = DriverManager.getConnection(host, user, password);
-                    String insertQuery = "INSERT INTO klienci (Imie, Nazwisko, Email, NrTel, Adres) VALUES (?, ?, ?, ?, ?)";
                     if (imie.equals("") || nazwisko.equals("") || email.equals("") || nrTel.equals("") || adres.equals("")){
                         JOptionPane.showMessageDialog(null,"Wypełnij wszystkie pola!");
                     } else if (!email.contains("@")) {
                         JOptionPane.showMessageDialog(null,"Najprawdopodobniej wprowadziłeś zły adres e-mail");
                     } else {
-                        String[] newClient = {imie, nazwisko, email, nrTel, adres};
-                        DefaultTableModel model = (DefaultTableModel)tableKlienci.getModel();
-                        model.addRow(newClient);
-                        try (PreparedStatement st = con.prepareStatement(insertQuery)){
-                            st.setString(1,imie);
-                            st.setString(2,nazwisko);
-                            st.setString(3,email);
-                            st.setString(4,nrTel);
-                            st.setString(5,adres);
+                        try {
+                            DatabaseQuery db = new DatabaseQuery(host,username,password);
+                            try {
+                                db.addRecord(imie,nazwisko,email,nrTel,adres);
+                                String[] newClient = {imie, nazwisko, email, nrTel, adres};
+                                DefaultTableModel model = (DefaultTableModel)tableKlienci.getModel();
+                                model.addRow(newClient);
+                            }
+                            catch (SQLException ex){
+                                System.err.println(ex);
+                                JOptionPane.showMessageDialog(null,"Nie udało się wprowadzić klienta do bazy danych.");
+                            }
                         }
                         catch (SQLException ex) {
-                            JOptionPane.showMessageDialog(null, "Nie udało się wprowadzić klienta do bazy danych.");
+                            System.err.println(ex);
+                            JOptionPane.showMessageDialog(null, "Nie udało się połączyć z bazą danych.");
                         }
-
                         textFieldImie.setText("");
                         textFieldNazwisko.setText("");
                         textFieldEmail.setText("");
                         textFieldNrTel.setText("");
                         textFieldAdres.setText("");
+                        textFieldNrKarty.setText("");
                     }
                 }
-                catch (SQLException e1){
-                    e1.printStackTrace();
+        });
+
+        zapiszButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    DatabaseQuery db = new DatabaseQuery(host,username,password);
+                    try {
+                        db.editRecord(imie,nazwisko,email,nrTel,adres,nrKarty);
+                        DefaultTableModel model = (DefaultTableModel)tableKlienci.getModel();
+                        model.setValueAt(imie, 5 ,0);
+                        model.setValueAt(nazwisko, 5 ,1);
+                        model.setValueAt(email, 5 ,2);
+                        model.setValueAt(nrTel, 5 ,3);
+                        model.setValueAt(adres, 5 ,4);
+                        model.setValueAt(nrKarty, 5 ,5);
+                        model.fireTableCellUpdated();
+                    }
+                    catch (SQLException ex) {
+                        System.err.println(ex);
+                        System.out.println("Nie udało się edytować danych klienta.");
+                    }
+                }
+                catch (SQLException ex){
+                    System.err.println(ex);
+                    System.out.println("Nie udało się połączyć z bazą danych.");
                 }
             }
         });
+
+        usuńButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
         tableKlienci.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -107,7 +143,7 @@ public class CarApp extends JFrame {
     }
 
     public DefaultTableModel createTable() {
-        Database clientsDatabase = new Database(host, user, password);
+        Database clientsDatabase = new Database(host, username, password);
         ArrayList<Client> clientList = clientsDatabase.getClients();
 
         String[] columns = {"Imie", "Nazwisko", "Email",  "Numer Telefonu", "Adres", "Numer Karty"};
