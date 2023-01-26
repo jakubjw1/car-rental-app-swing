@@ -18,10 +18,12 @@ public class CarApp extends JFrame {
     private JButton dodajButton;
     private JButton usuńButton;
     private JButton zapiszButton;
-    private JTable tableSamochody;
-    private JButton button1;
     private JButton wyróbKartęButton;
     private JButton odswiezButton;
+    private JButton dodajSamochódButton;
+    private JButton usuńWybranyButton;
+    private JButton zamówButton;
+    private JTable tableSamochody;
     Configuration config = new Configuration("jdbc:mysql://localhost/car_rental", "root", "");
     String host = config.host;
     String username = config.username;
@@ -38,7 +40,8 @@ public class CarApp extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(1000,500);
 
-        DefaultTableModel model = createTable();
+        DefaultTableModel model = createTableKlienci();
+        DefaultTableModel modelCars = createTableSamochody();
 
         dodajButton.addActionListener(new ActionListener() {
             @Override
@@ -213,9 +216,15 @@ public class CarApp extends JFrame {
                 textFieldAdres.setText("");
             }
         });
+        dodajSamochódButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
     }
 
-    public DefaultTableModel createTable() {
+    public DefaultTableModel createTableKlienci() {
         Database clientsDatabase = new Database(host, username, password);
         ArrayList<Client> clientList = clientsDatabase.getClients();
 
@@ -247,5 +256,29 @@ public class CarApp extends JFrame {
         tableKlienci.getColumnModel().getColumn(2).setPreferredWidth(140);
         tableKlienci.getColumnModel().getColumn(5).setPreferredWidth(20);
         return model;
+    }
+
+    public DefaultTableModel createTableSamochody() {
+        Database carsDatabase = new Database(host, username, password);
+        ArrayList<Car> carList = carsDatabase.getCars();
+
+        String[] columns = {"ID_Samochodu", "Marka", "Model", "ID_klienta"};
+
+        String[][] rows = new String[carList.size()][4];
+
+        int i=0;
+        for (Car c : carList) {
+            if (c != null) {
+                rows[i][0] = String.valueOf(c.getID_samochodu());
+                rows[i][1] = c.getMarka();
+                rows[i][2] = c.getModel();
+                rows[i][3] = String.valueOf(c.getID_klienta());
+                i++;
+            }
+        }
+
+        DefaultTableModel modelCars = new DefaultTableModel(rows, columns);
+        tableSamochody.setModel(modelCars);
+        return modelCars;
     }
 }

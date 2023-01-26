@@ -26,7 +26,7 @@
             </constraints>
             <properties>
               <background color="-9994348"/>
-              <font name="JetBrains Mono" size="22"/>
+              <font name="JetBrains Mono" size="22" style="1"/>
               <text value="Wpisz tutaj numer karty klienta:"/>
             </properties>
           </component>

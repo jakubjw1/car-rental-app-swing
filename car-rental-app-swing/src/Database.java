@@ -49,4 +49,35 @@ public class Database {
         }
     }
 
+    public ArrayList<Car> getCars() {
+        ArrayList<Car> carList = new ArrayList<>();
+
+        Connection connection;
+
+        try {
+            connection = DriverManager.getConnection(this.host, this.username, this.password);
+            String query2 = "SELECT * FROM samochody";
+            Statement stat = connection.createStatement();
+            ResultSet results = stat.executeQuery(query2);
+
+            while (results.next()) {
+                int ID_samochodu = results.getInt("ID_samochodu");
+                String marka = results.getString("marka");
+                String model = results.getString("model");
+                int ID_klienta = results.getInt("ID_klienta");
+                Car car = new Car(ID_samochodu,marka,model,ID_klienta);
+                carList.add(car);
+            }
+            connection.close();
+            return carList;
+        } catch (SQLException e) {
+            System.out.println("Nie udalo sie polaczyc z baza samochodow.");
+            carList.add(new Car(1,"Audi", "A5",0));
+            carList.add(new Car(2,"Audi", "A6", 0));
+            carList.add(new Car(3,"BMW", "X3", 0));
+            carList.add(new Car(4,"Bentley", "Continental", 0));
+            return carList;
+        }
+    }
+
 }
