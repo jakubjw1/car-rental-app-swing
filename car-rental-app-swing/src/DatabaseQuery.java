@@ -62,4 +62,27 @@ public class DatabaseQuery {
         st.executeUpdate();
     }
 
+    public void addCar(String marka, String model) throws SQLException{
+        String query = "INSERT INTO samochody (marka, model) VALUES (?, ?)";
+        PreparedStatement st = con.prepareStatement(query);
+        st.setString(1,marka);
+        st.setString(2,model);
+        st.executeUpdate();
+    }
+
+    public void deleteCar(String ID_samochodu) throws SQLException{
+        String query = "DELETE FROM samochody WHERE ID_samochodu = ?";
+        PreparedStatement st = con.prepareStatement(query);
+        st.setString(1,ID_samochodu);
+        st.executeUpdate();
+    }
+
+    public void orderCar(int ID_klienta, String ID_samochodu) throws SQLException{
+        String query = "UPDATE samochody SET ID_klienta = ? WHERE ID_samochodu = ?";
+        PreparedStatement st = con.prepareStatement(query);
+        st.setInt(1,ID_klienta);
+        st.setString(2,ID_samochodu);
+        st.executeUpdate();
+    }
+
 }

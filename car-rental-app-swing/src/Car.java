@@ -10,9 +10,7 @@ public class Car {
         this.ID_klienta = ID_klienta;
     }
 
-    public int getID_samochodu() {
-        return ID_samochodu;
-    }
+    public int getID_samochodu() {return ID_samochodu;}
 
     public String getMarka() {
         return marka;

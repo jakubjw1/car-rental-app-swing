@@ -39,11 +39,9 @@ public class KartaKlienta extends JFrame {
                         }
                     }
                     catch (SQLException ex){
-                        System.err.println(ex);
                         JOptionPane.showMessageDialog(null,"Nie udało się wyrobić karty.");
                     }
                 } catch (SQLException ex){
-                    System.err.println(ex);
                     JOptionPane.showMessageDialog(null,"Nie udało się połączyć z bazą danych.");
                 }
 

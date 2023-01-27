@@ -21,13 +21,15 @@ public class CarApp extends JFrame {
     private JButton wyróbKartęButton;
     private JButton odswiezButton;
     private JButton dodajSamochódButton;
-    private JButton usuńWybranyButton;
+    private JButton usuńButton1;
     private JButton zamówButton;
     private JTable tableSamochody;
+    private JButton odświeżButton;
     Configuration config = new Configuration("jdbc:mysql://localhost/car_rental", "root", "");
     String host = config.host;
     String username = config.username;
     String password = config.password;
+    public static String ID_samochodu;
 
     public static void main(String[] args) {
         CarApp carApp1 = new CarApp();
@@ -107,11 +109,9 @@ public class CarApp extends JFrame {
                             model1.fireTableCellUpdated(tableKlienci.getSelectedRow(), i);
                         }
                     } catch (SQLException ex) {
-                        System.err.println(ex);
                         JOptionPane.showMessageDialog(null,"Nie udało się edytować danych klienta.");
                     }
                 } catch (SQLException ex) {
-                    System.err.println(ex);
                     JOptionPane.showMessageDialog(null,"Nie udało się połączyć z bazą danych.");
                 }
             }
@@ -129,25 +129,27 @@ public class CarApp extends JFrame {
                 String email = textFieldEmail.getText();
                 String nrTel = textFieldNrTel.getText();
                 String adres = textFieldAdres.getText();
-                try {
-                    DatabaseQuery db = new DatabaseQuery(host,username,password);
+                if (imie.equals("") && nazwisko.equals("") && email.equals("") && nrTel.equals("") && adres.equals("")) {
+                    JOptionPane.showMessageDialog(null, "Wybierz klienta");
+                } else {
                     try {
-                        db.deleteRecord(imie,nazwisko,email,nrTel,adres);
-                        DefaultTableModel model = (DefaultTableModel) tableKlienci.getModel();
-                        model.removeRow(tableKlienci.getSelectedRow());
-                    } catch (SQLException ex){
-                        System.err.println(ex);
-                        JOptionPane.showMessageDialog(null,"Nie udało się usunąć klienta z bazy danych.");
+                        DatabaseQuery db = new DatabaseQuery(host, username, password);
+                        try {
+                            db.deleteRecord(imie, nazwisko, email, nrTel, adres);
+                            DefaultTableModel model = (DefaultTableModel) tableKlienci.getModel();
+                            model.removeRow(tableKlienci.getSelectedRow());
+                        } catch (SQLException ex) {
+                            JOptionPane.showMessageDialog(null, "Nie udało się usunąć klienta z bazy danych.");
+                        }
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(null, "Nie udało się połączyć z bazą danych.");
                     }
-                } catch (SQLException ex){
-                    System.err.println(ex);
-                    JOptionPane.showMessageDialog(null,"Nie udało się połączyć z bazą danych.");
+                    textFieldImie.setText("");
+                    textFieldNazwisko.setText("");
+                    textFieldEmail.setText("");
+                    textFieldNrTel.setText("");
+                    textFieldAdres.setText("");
                 }
-                textFieldImie.setText("");
-                textFieldNazwisko.setText("");
-                textFieldEmail.setText("");
-                textFieldNrTel.setText("");
-                textFieldAdres.setText("");
             }
         });
         wyróbKartęButton.addActionListener(new ActionListener() {
@@ -155,8 +157,12 @@ public class CarApp extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String imie = textFieldImie.getText();
                 String nazwisko = textFieldNazwisko.getText();
-                KartaKlienta kartaKlienta = new KartaKlienta(imie, nazwisko);
-                kartaKlienta.setVisible(true);
+                if (imie.equals("") || nazwisko.equals("")){
+                    JOptionPane.showMessageDialog(null, "Wybierz klienta!");
+                }else {
+                    KartaKlienta kartaKlienta = new KartaKlienta(imie, nazwisko);
+                    kartaKlienta.setVisible(true);
+                }
             }
         });
         tableKlienci.addMouseListener(new MouseAdapter() {
@@ -179,36 +185,7 @@ public class CarApp extends JFrame {
         odswiezButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Database clientsDatabase = new Database(host, username, password);
-                ArrayList<Client> clientList = clientsDatabase.getClients();
-
-                String[] columns = {"Imie", "Nazwisko", "Email",  "Numer Telefonu", "Adres", "Numer Karty"};
-
-                String[][] rows = new String[clientList.size()][6];
-
-                int i=0;
-                for (Client c : clientList) {
-                    if (c instanceof RegularClient) {
-                        rows[i][0] = c.getImie();
-                        rows[i][1] = c.getNazwisko();
-                        rows[i][2] = c.getEmail();
-                        rows[i][3] = c.getNrTel();
-                        rows[i][4] = c.getAdres();
-                        rows[i][5] = String.valueOf(((RegularClient) c).getNrKarty());
-                    } else {
-                        rows[i][0] = c.getImie();
-                        rows[i][1] = c.getNazwisko();
-                        rows[i][2] = c.getEmail();
-                        rows[i][3] = c.getNrTel();
-                        rows[i][4] = c.getAdres();
-                    }
-                    i++;
-                }
-
-                DefaultTableModel model = new DefaultTableModel(rows, columns);
-                tableKlienci.setModel(model);
-                tableKlienci.getColumnModel().getColumn(2).setPreferredWidth(140);
-                tableKlienci.getColumnModel().getColumn(5).setPreferredWidth(20);
+                createTableKlienci();
                 textFieldImie.setText("");
                 textFieldNazwisko.setText("");
                 textFieldEmail.setText("");
@@ -219,7 +196,49 @@ public class CarApp extends JFrame {
         dodajSamochódButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                CarAdding carAdding = new CarAdding();
+                carAdding.setVisible(true);
+            }
+        });
+        odświeżButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createTableSamochody();
+            }
+        });
+        usuńButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    DatabaseQuery db = new DatabaseQuery(host, username, password);
+                    try {
+                        db.deleteCar(ID_samochodu);
+                        DefaultTableModel model = (DefaultTableModel) tableKlienci.getModel();
+                        model.removeRow(tableKlienci.getSelectedRow());
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(null, "Nie udało się usunąć samochodu z bazy danych.");
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Nie udało się połączyć z bazą danych.");
+                }
+            }
+        });
 
+        zamówButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Order order = new Order();
+                order.setVisible(true);
+            }
+        });
+
+        tableSamochody.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = tableSamochody.rowAtPoint(e.getPoint());
+                String ID_samochodu =  tableSamochody.getModel().getValueAt(row,0).toString();
+                CarApp.ID_samochodu = ID_samochodu;
+                System.out.println();
             }
         });
     }
